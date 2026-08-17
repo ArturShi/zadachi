@@ -1,0 +1,21 @@
+<tr id="task-{{ t.id }}">
+  <td class="date">{{ t.created_date }}</td>
+  <td class="date">{{ t.end_date }}</td>
+  <td class="name">{{ t.name }}</td>
+  <td><span class="badge status-{{ status_class[t.status] }}">{{ t.status }}</span></td>
+  <td>
+    {% for p in split_responsibles(t.responsible) %}
+    <span class="tag">{{ p }}</span>
+    {% endfor %}
+  </td>
+  <td class="note">{{ t.note if t.note else "" }}</td>
+  <td>
+    <div class="row-btns">
+      <button class="ghost small" hx-post="/archiv/tasks/{{ t.id }}/unarchive"
+              hx-target="#archiv-list" hx-swap="innerHTML">Вернуть</button>
+      <button class="danger small" hx-post="/archiv/tasks/{{ t.id }}/delete"
+              hx-target="#archiv-list" hx-swap="innerHTML"
+              hx-confirm="Удалить задачу «{{ t.name }}» навсегда?">Удалить</button>
+    </div>
+  </td>
+</tr>

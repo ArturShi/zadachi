@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="top">
+  <h1>Задачи</h1>
+  <span class="count">{{ count }} шт.</span>
+</header>
+
+<section class="panel">
+  <h2>Новая задача</h2>
+  <form class="add-form" hx-post="/tasks" hx-target="#task-list" hx-swap="innerHTML"
+        hx-on::after-request="if(event.detail.successful) this.reset()">
+    <div class="grid">
+      <div class="field wide">
+        <label for="t-name">Название задачи *</label>
+        <input id="t-name" name="name" required maxlength="200" placeholder="Что нужно сделать?">
+      </div>
+      <div class="field">
+        <label for="t-end">Окончание</label>
+        <input id="t-end" name="end_date" type="date">
+      </div>
+      <div class="field">
+        <label for="t-resp">Ответственный(ые)</label>
+        <input id="t-resp" name="responsible" maxlength="300" placeholder="Иванов, Петров">
+      </div>
+      <div class="field wide">
+        <label for="t-note">Примечание</label>
+        <textarea id="t-note" name="note" rows="2" placeholder="Сроки, ссылки, детали..."></textarea>
+      </div>
+      <div><button type="submit">Добавить</button></div>
+    </div>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Список задач</h2>
+  <form class="panel filter-row"
+        hx-get="/tasks" hx-target="#task-list" hx-swap="innerHTML"
+        hx-trigger="submit, change, input changed delay:300ms from:input">
+    <div class="field">
+      <label for="f-status">Статус</label>
+      <select id="f-status" name="status">
+        <option value="">Все</option>
+        {% for s in statuses %}
+        <option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="f-q">Поиск</label>
+      <input id="f-q" name="q" type="search" placeholder="Название или ответственный" value="{{ q }}">
+    </div>
+    <div class="btn-stack">
+      <a class="btn-danger" href="/archiv">Архив</a>
+      <button type="submit">Применить</button>
+    </div>
+  </form>
+  <div id="task-list" style="margin-top:14px">{% include "partials/task_list.html" %}</div>
+</section>
+
+<footer>Задачи · FastAPI + HTMX + SQLite</footer>
+{% endblock %}

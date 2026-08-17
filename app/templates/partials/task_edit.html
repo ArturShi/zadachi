@@ -1,0 +1,32 @@
+<tr id="task-{{ t.id }}">
+  <td colspan="5">
+    <form class="edit-form" hx-post="/tasks/{{ t.id }}" hx-target="#task-list" hx-swap="innerHTML">
+      <div class="field">
+        <label>Название *</label>
+        <input name="name" required maxlength="200" value="{{ t.name }}">
+      </div>
+      <div class="field">
+        <label>Окончание</label>
+        <input name="end_date" type="date" value="{{ t.end_date | to_iso }}">
+      </div>
+      <div class="field">
+        <label>Статус</label>
+        <select name="status">
+          {% for s in statuses %}<option value="{{ s }}" {% if s == t.status %}selected{% endif %}>{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>Ответственный(ые)</label>
+        <input name="responsible" maxlength="300" value="{{ t.responsible }}">
+      </div>
+      <div class="field note-field">
+        <label>Примечание</label>
+        <textarea name="note" rows="2">{{ t.note }}</textarea>
+      </div>
+      <div class="btns">
+        <button type="submit">Сохранить</button>
+        <button type="button" class="ghost" hx-get="/tasks/{{ t.id }}" hx-target="closest tr" hx-swap="outerHTML">Отмена</button>
+      </div>
+    </form>
+  </td>
+</tr>

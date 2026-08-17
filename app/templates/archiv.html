@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="top">
+  <h1>Архив</h1>
+  <span class="count">{{ count }} шт.</span>
+  <a class="btn" href="/" style="margin-left:auto">К задачам</a>
+</header>
+
+<section class="panel">
+  <h2>Список задач</h2>
+  <form class="filter-row"
+        hx-get="/archiv/tasks" hx-target="#archiv-list" hx-swap="innerHTML"
+        hx-trigger="submit, change, input changed delay:300ms from:input">
+    <div class="field">
+      <label for="f-status">Статус</label>
+      <select id="f-status" name="status">
+        <option value="">Все</option>
+        {% for s in statuses %}
+        <option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="f-q">Поиск</label>
+      <input id="f-q" name="q" type="search" placeholder="Название или ответственный" value="{{ q }}">
+    </div>
+    <button type="submit">Применить</button>
+  </form>
+  <div id="archiv-list" style="margin-top:14px">{% include "partials/archiv_list.html" %}</div>
+</section>
+
+<footer>Задачи · FastAPI + HTMX + SQLite</footer>
+{% endblock %}

@@ -1,0 +1,31 @@
+<tr id="task-{{ t.id }}">
+  <td class="date">{{ t.created_date }}</td>
+  <td class="date">{{ t.end_date }}</td>
+  <td class="name">{{ t.name }}</td>
+  <td>
+    <select class="status-select status-{{ status_class[t.status] }}"
+            name="status"
+            hx-post="/tasks/{{ t.id }}/status"
+            hx-target="#task-list" hx-swap="innerHTML"
+            hx-trigger="change"
+            hx-on:change="if(this.value==='Выполнена' && !confirm('Перенести задачу «{{ t.name }}» в Архив?')){this.value='{{ t.status }}'; return false;}">
+      {% for s in statuses %}
+      <option value="{{ s }}" {% if s == t.status %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </td>
+  <td>
+    {% for p in split_responsibles(t.responsible) %}
+    <span class="tag">{{ p }}</span>
+    {% endfor %}
+  </td>
+  <td class="note">{{ t.note if t.note else "" }}</td>
+  <td>
+    <div class="row-btns">
+      <button class="ghost small" hx-get="/tasks/{{ t.id }}/edit" hx-target="closest tr" hx-swap="outerHTML">Изменить</button>
+      <button class="danger small" hx-post="/tasks/{{ t.id }}/delete"
+              hx-target="#task-list" hx-swap="innerHTML"
+              hx-confirm="Удалить задачу «{{ t.name }}»? Она будет перенесена в Архив.">Удалить</button>
+    </div>
+  </td>
+</tr>
