@@ -45,6 +45,35 @@
 
 FastAPI + Jinja2 + HTMX + SQLite (sqlite3, без ORM).
 
+## Развёртывание на Ubuntu одной командой
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/ArturShi/zadachi/main/install.sh)
+```
+
+Скрипт сам скачает код, создаст виртуальное окружение, установит
+зависимости, зарегистрирует сервис автозапуска (systemd) и проверит,
+что приложение отвечает. После установки откройте http://localhost:8010
+
+Опции:
+
+- `ZADACHI_PORT=8080` - установить на другой порт (по умолчанию 8010)
+- `ZADACHI_NO_SYSTEMD=1` - только код и окружение, без сервиса автозапуска
+  (для разработки или ручного запуска)
+
+Пример с другим портом:
+
+```bash
+ZADACHI_PORT=8080 bash <(curl -s https://raw.githubusercontent.com/ArturShi/zadachi/main/install.sh)
+```
+
+Или развернуть из уже скачанного репозитория:
+
+```bash
+git clone https://github.com/ArturShi/zadachi.git && cd zadachi
+bash install.sh
+```
+
 ## Запуск
 
 ```bash
