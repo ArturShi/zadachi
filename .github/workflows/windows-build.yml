@@ -42,7 +42,7 @@ jobs:
         run: Compress-Archive -Path dist\Zadachi -DestinationPath dist\Zadachi-portable-win64.zip
 
       - name: Build installer (Setup.exe)
-        uses: Minionguyjpro/Inno-Setup-Action@v4.0.2
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.9
         with:
           path: installer\zadachi.iss
 
