@@ -3,3 +3,7 @@ __pycache__/
 .pytest_cache/
 *.db
 .venv/
+build/
+dist/
+installer/output/
+*.spec.bak

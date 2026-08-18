@@ -7,7 +7,11 @@ from pathlib import Path
 
 STATUSES = ["Новая", "В работе", "Выполнена", "Отложена"]
 
-_DEFAULT_DB = Path.home() / ".local" / "share" / "zadachi" / "tasks.db"
+if os.name == "nt":
+    # Windows: база в %LOCALAPPDATA%\Zadachi\tasks.db (переживает переустановку)
+    _DEFAULT_DB = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "Zadachi" / "tasks.db"
+else:
+    _DEFAULT_DB = Path.home() / ".local" / "share" / "zadachi" / "tasks.db"
 
 
 def db_path() -> Path:

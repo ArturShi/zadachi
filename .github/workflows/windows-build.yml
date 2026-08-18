@@ -1,0 +1,68 @@
+name: Windows build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'run.py'
+      - 'installer/**'
+      - 'zadachi.spec'
+      - 'requirements.txt'
+      - '.github/workflows/windows-build.yml'
+
+jobs:
+  build:
+    name: Tests + Windows installer
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Run tests
+        run: python -m pytest tests/ -v
+
+      - name: Build with PyInstaller
+        run: pyinstaller --noconfirm --clean zadachi.spec
+
+      - name: Create portable ZIP
+        shell: powershell
+        run: Compress-Archive -Path dist\Zadachi -DestinationPath dist\Zadachi-portable-win64.zip
+
+      - name: Install Inno Setup
+        uses: jrsoftware/issi@v2
+
+      - name: Build installer (Setup.exe)
+        run: iscc installer\zadachi.iss
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: zadachi-windows
+          path: |
+            installer\output\*.exe
+            dist\Zadachi-portable-win64.zip
+          retention-days: 14
+
+      - name: Create GitHub Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" `
+            installer\output\*.exe `
+            dist\Zadachi-portable-win64.zip `
+            --title "Задачи ${{ github.ref_name }}" `
+            --notes "Установочный пакет для Windows: Zadachi-Setup-${{ github.ref_name }}.exe и портативная версия. Подробная инструкция: README.md (раздел «Установка на Windows»)."
